@@ -11,11 +11,10 @@ data_blight['lng'] = data_blight['coordinates'].apply(lambda x: x.split(', ')[1]
 
 data_blight['lat'] = data_blight.lat.astype(float)
 data_blight['lng'] = data_blight.lng.astype(float)
+
 data_blight['building_street_address'] = data_blight['ViolationAddress'].apply(lambda x: x.split('\n')[0])
 
 unique_buildings = data_blight.loc[:,['building_street_address', 'lat', 'lng']].drop_duplicates()
-
-#unique_buildings.to_csv('unique_blight_buildings.csv')
 
 data_311 = pd.read_csv('./detroit-311.csv')
 data_311['building_street_address'] = data_311['address'].apply(lambda x: x.split(',')[0].replace(' Detroit', ''))
@@ -31,9 +30,11 @@ unique_buildings_crime = data_crime.loc[:,['building_street_address', 'lat', 'ln
 
 combined = pd.concat([unique_buildings, unique_buildings_311, unique_buildings_crime])
 
-#geometry = [Point(xy) for xy in zip(data.lng, data.lat)]
-#crs=None
-#geo_df = GeoDataFrame(data, crs=crs, geometry=geometry)
+geometry = [Point(xy) for xy in zip(combined.lng, combined.lat)]
+crs=None
+geo_df = GeoDataFrame(combined, crs=crs, geometry=geometry)
+geo_df.to_csv('./geo_dataframe.csv')
+
 
 
 
